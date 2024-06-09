@@ -1,0 +1,6 @@
+[submodule "vendor/quirc"]
+	path = vendor/quirc
+	url = https://github.com/dlbeer/quirc
+[submodule "vendor/QR-Code-generator"]
+	path = vendor/QR-Code-generator
+	url = https://github.com/nayuki/QR-Code-generator
