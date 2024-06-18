@@ -47,7 +47,10 @@ static void initialize()
         .y = 0,
     };
     uint8_t output[QRCODEC_MAX_BUFFER_SIZE];
-    qrcodec_qr qrcode;
+    qrcodec_qr qrcode = {
+        .bitmap_data = &output[0],
+        .bitmap_size = QRCODEC_MAX_BUFFER_SIZE,
+    };
     size_t qrsize;
     bool value;
     SDL_DisplayMode display_mode;
@@ -61,14 +64,11 @@ static void initialize()
     draw_area.h = display_mode.h / 4;
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
-    puts("here");
+    
     qrcodec_encode(&qrdata, &qrcode);
-    puts("here");
     qrcodec_qr_get_size(&qrcode, &qrsize);
-    puts("here");
     texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, qrsize, qrsize);
 
-    puts("here");
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(renderer);
     SDL_SetRenderTarget(renderer, texture);
@@ -87,9 +87,7 @@ static void initialize()
             }
         }
     }
-    puts("here");
     SDL_SetRenderTarget(renderer, NULL);
-    puts("here");
     SDL_RenderCopy(renderer, texture, NULL, &draw_area);
     SDL_RenderPresent(renderer);
 }
