@@ -1,5 +1,12 @@
+#ifdef _WIN32
+#include <SDL.h>
+#undef main
+#else
 #include <SDL2/SDL.h>
+#endif
 #include <qrcodec.h>
+
+#include <stdio.h>
 
 static SDL_Window *window;
 static SDL_Renderer *renderer;
@@ -11,7 +18,9 @@ static void shutdown();
 
 int main()
 {
-
+    initialize();
+    main_loop();
+    shutdown();
     return 0;
 }
 
@@ -33,6 +42,11 @@ static void initialize()
         .w = 1,
         .h = 1,
     };
+    SDL_Rect draw_area = {
+        .x = 0,
+        .y = 0,
+    };
+    uint8_t output[QRCODEC_MAX_BUFFER_SIZE];
     qrcodec_qr qrcode;
     size_t qrsize;
     bool value;
@@ -43,15 +57,18 @@ static void initialize()
     SDL_GetCurrentDisplayMode(0, &display_mode);
 
     window = SDL_CreateWindow("QRCodec Example", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, display_mode.w / 2, display_mode.h / 2, 0);
+    draw_area.w = display_mode.h / 4;
+    draw_area.h = display_mode.h / 4;
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
-
+    puts("here");
     qrcodec_encode(&qrdata, &qrcode);
-
+    puts("here");
     qrcodec_qr_get_size(&qrcode, &qrsize);
-
+    puts("here");
     texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, qrsize, qrsize);
 
+    puts("here");
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(renderer);
     SDL_SetRenderTarget(renderer, texture);
@@ -70,8 +87,10 @@ static void initialize()
             }
         }
     }
+    puts("here");
     SDL_SetRenderTarget(renderer, NULL);
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    puts("here");
+    SDL_RenderCopy(renderer, texture, NULL, &draw_area);
     SDL_RenderPresent(renderer);
 }
 
@@ -103,4 +122,8 @@ static void main_loop()
 
 static void shutdown()
 {
+    SDL_DestroyTexture(texture);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 }

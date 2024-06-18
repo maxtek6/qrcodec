@@ -19,7 +19,7 @@ typedef enum
 
 typedef enum
 {
-    QRCODEC_ECC_LOW,
+    QRCODEC_ECC_LOW = 0,
     QRCODEC_ECC_MEDIUM,
     QRCODEC_ECC_QUARTILE,
     QRCODEC_ECC_HIGH,
